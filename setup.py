@@ -1,14 +1,13 @@
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 setup(
     name='PrettyPrintTree',
-    packages=['prettyprinttree'],
     version='1.0',
-    description='Pretty print trees',
-    author='Aharon Sambol',
-    author_email='clement.michard@gmail.com',
+    author="Aharon Sambol",
+    author_email='email@example.com',
+    packages=find_packages('prettyprinttree'),
+    package_dir={'': 'prettyprinttree'},
     url='https://github.com/AharonSambol/PrettyPrintTree',
-    download_url='https://github.com/clemtoy/pptree/archive/3.1.tar.gz',
-    keywords=['tree', 'pretty', 'print', 'pretty-print'],
-    classifiers=[],
+    keywords=['tree', 'pretty', 'print', 'pretty-print', 'display'],
+    description='A tool to print trees to the console'
 )
