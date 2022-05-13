@@ -1,48 +1,50 @@
 # PrettyPrintTree
 
 This package allows you to print the tree datastructure in a readable fashion (in python).
+It supports trees with any kind of data (as long it can be turned into a string).
+And even supports multilined nodes (as in strings with \n).
 
 # Documentation
 
 I tried to make this as flexible as possible, so in order to support multiple types of trees
 you need to explain to the program how to print your tree. The way to accomplish this is by passing 2 lambdas:
-get_value: Given a node of your tree type returns that node's value
-for example if your tree implementation is:
-```
-class Tree:
-    def __init__(self, val):
-        self.val = val
-```
-then get_value would be: 
-```
-lambda node: node.val
-```
-(if the value of the tree doesn't implement __str__ get_value should turn it into a string)
+1)  get_value: Given a node of your tree type returns that node's value
+    for example if your tree implementation is:
+    ```
+    class Tree:
+        def __init__(self, val):
+            self.val = val
+    ```
+    then get_value would be: 
+    ```
+    lambda node: node.val
+    ```
+    (if the value of the tree doesn't implement \_\_str\_\_ get_value should turn it into a string)
 
-get_children: Given a node of your tree type returns a list of all its children (from left to right).
-For example if this is your tree implementation:
-```
-class Tree:
-    def __init__(self, val):
-        self.val = val
-        self.children = []
-```
-Then get_children would be as simple as: 
-```
-lambda node: node.children
-```
-Or if your tree implementation is:
-```
-class Tree:
-    def __init__(self, val):
-        self.val = val
-        self.child_right = None
-        self.child_left = None
-```
-Then get_children would be: 
-```
-lambda node: [node.child_left, node.child_right]
-```
+2)  get_children: Given a node of your tree type returns a list of all its children (from left to right).
+    For example if this is your tree implementation:
+    ```
+    class Tree:
+        def __init__(self, val):
+            self.val = val
+            self.children = []
+    ```
+    Then get_children would be as simple as: 
+    ```
+    lambda node: node.children
+    ```
+    Or if your tree implementation is:
+    ```
+    class Tree:
+        def __init__(self, val):
+            self.val = val
+            self.child_right = None
+            self.child_left = None
+    ```
+    Then get_children would be: 
+    ```
+    lambda node: [node.child_left, node.child_right]
+    ```
 
 
 In order to print the tree you first need to make a PrettyPrintTree Object which you pass your lambdas (and other settings) to,
