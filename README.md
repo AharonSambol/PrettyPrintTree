@@ -63,7 +63,7 @@ child1.add_child(Tree(6))
 child2.add_child(Tree(7))
 pt(tree)
 ```
-![plot](https://github.com/AharonSambol/PrettyPrintTree/tree/master/ExampleImages/one_to_seven.JPG)
+![plot](./ExampleImages/one_to_seven.JPG)
 
 # Other Settings
 
@@ -74,7 +74,7 @@ then you can set trim to a specific amount of characters.
 ```
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, trim=5)
 ```
-![plot](https://github.com/AharonSambol/PrettyPrintTree/tree/master/ExampleImages/trim.JPG)
+![plot](./ExampleImages/trim.JPG)
 
 
 ## Return Instead of Print:
@@ -94,12 +94,12 @@ from colorama import Back
 # change color to black:
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, color=Back.BLACK)
 ```
-![plot](https://github.com/AharonSambol/PrettyPrintTree/tree/master/ExampleImages/black.JPG)
+![plot](./ExampleImages/black.JPG)
 ```
 # without any color:
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, color=None)
 ```
-![plot](https://github.com/AharonSambol/PrettyPrintTree/tree/master/ExampleImages/no_color.JPG)
+![plot](./ExampleImages/no_color.JPG)
 
 
 ## Border:
@@ -107,16 +107,16 @@ You can also surround each node with a little border:
 ```
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, border=True)
 ```
-![plot](https://github.com/AharonSambol/PrettyPrintTree/tree/master/ExampleImages/border.JPG)
+![plot](./ExampleImages/border.JPG)
 
 
 ## Escape NewLines:
-You can escape \n sp that each node will be printed on one line.
+You can escape \n so that each node will be printed on one line.
 Note: \\n wil be escaped into \\\\n so that you can tell the difference
 ```
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, show_newline_literal=True)
 ```
-![plot](https://github.com/AharonSambol/PrettyPrintTree/tree/master/ExampleImages/new_line.JPG)
+![plot](./ExampleImages/new_line.JPG)
 
 
 ## Start Message:
@@ -124,5 +124,5 @@ You can give a lambda that will be given the tree and will return a string which
 ```
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, start_message=lambda node: f'printing tree of type {node.typ}')
 ```
-![plot](https://github.com/AharonSambol/PrettyPrintTree/tree/master/ExampleImages/msg.JPG)
+![plot](./ExampleImages/msg.JPG)
 
