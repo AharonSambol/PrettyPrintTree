@@ -1,3 +1,4 @@
+README.md
 setup.cfg
 setup.py
 prettyprinttree/PrettyPrintTree.egg-info/PKG-INFO

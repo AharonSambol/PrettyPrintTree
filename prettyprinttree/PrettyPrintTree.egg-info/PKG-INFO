@@ -1,7 +1,7 @@
 Metadata-Version: 2.1
 Name: PrettyPrintTree
-Version: 1.0
-Summary: UNKNOWN
+Version: 1.2
+Summary: A tool to print trees to the console
 Home-page: https://github.com/AharonSambol/PrettyPrintTree
 Author: Aharon Sambol
 Author-email: email@example.com
