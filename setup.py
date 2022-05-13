@@ -6,9 +6,9 @@ setup(
     version='1.0',
     description='Pretty print trees',
     author='Aharon Sambol',
-    author_email='clement.michard@gmail.com',
+    author_email='',
     url='https://github.com/AharonSambol/PrettyPrintTree',
-    download_url='https://github.com/clemtoy/pptree/archive/3.1.tar.gz',
+    download_url='',
     keywords=['tree', 'pretty', 'print', 'pretty-print'],
     classifiers=[],
 )
