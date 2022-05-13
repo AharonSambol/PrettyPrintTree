@@ -8,20 +8,7 @@ And even supports multilined nodes (as in strings with \n).
 
 I tried to make this as flexible as possible, so in order to support multiple types of trees
 you need to explain to the program how to print your tree. The way to accomplish this is by passing 2 lambdas:
-1)  get_value: Given a node of your tree type returns that node's value
-    for example if your tree implementation is:
-    ```
-    class Tree:
-        def __init__(self, val):
-            self.val = val
-    ```
-    then get_value would be: 
-    ```
-    lambda node: node.val
-    ```
-    (if the value of the tree doesn't implement \_\_str\_\_ get_value should turn it into a string)
-
-2)  get_children: Given a node of your tree type returns a list of all its children (from left to right).
+1)  get_children: Given a node of your tree type returns a list of all its children (from left to right).
     For example if this is your tree implementation:
     ```
     class Tree:
@@ -46,8 +33,23 @@ you need to explain to the program how to print your tree. The way to accomplish
     lambda node: [node.child_left, node.child_right]
     ```
 
+2)  get_value: Given a node of your tree type returns that node's value
+    for example if your tree implementation is:
+    ```
+    class Tree:
+        def __init__(self, val):
+            self.val = val
+    ```
+    then get_value would be: 
+    ```
+    lambda node: node.val
+    ```
+    (if the value of the tree doesn't implement \_\_str\_\_ get_value should turn it into a string)
 
-In order to print the tree you first need to make a PrettyPrintTree Object which you pass your lambdas (and other settings) to,
+
+
+
+In order to print the tree you first need to make a PrettyPrintTree object which you pass your lambdas (and any other settings) to,
 then you can call it whenever you want without needing to pass the lambdas each time.
 
 ## Example
