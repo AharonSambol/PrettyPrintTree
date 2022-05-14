@@ -4,6 +4,20 @@ This package allows you to print the tree datastructure in a readable fashion (i
 It supports trees with any kind of data (as long it can be turned into a string).
 And even supports multi lined nodes (as in strings with \n).
 
+# Install
+
+```
+pip install PrettyPrintTree
+```
+
+
+# Import
+
+```
+from PrettyPrint import PrettyPrintTree
+```
+
+
 # Documentation
 
 I tried to make this as flexible as possible, so in order to support multiple types of trees
@@ -52,7 +66,8 @@ you need to explain to the program how to print your tree. The way to accomplish
 In order to print the tree you first need to make a PrettyPrintTree object which you pass your lambdas (and any other settings) to,
 then you can call it whenever you want without needing to pass the lambdas each time.
 
-## Example
+
+## Examples
 
 ```
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val)
@@ -66,6 +81,7 @@ child2.add_child(Tree(7))
 pt(tree)
 ```
 ![plot](./ExampleImages/one_to_seven.JPG)
+
 
 # Other Settings
 
