@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='PrettyPrintTree',
-    version='1.12',
+    version='1.13',
     author="Aharon Sambol",
     author_email='email@example.com',
     py_modules=find_packages('src'),
