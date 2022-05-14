@@ -6,10 +6,10 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='PrettyPrintTree',
-    version='1.191',
+    version='1.192',
     author="Aharon Sambol",
     author_email='email@example.com',
-    py_modules=find_packages('src'),
+    py_modules=find_packages('PrettyPrint'),
     packages=find_packages(),
     license='MIT License',
     url='https://github.com/AharonSambol/PrettyPrintTree',
