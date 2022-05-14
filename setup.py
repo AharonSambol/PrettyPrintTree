@@ -6,7 +6,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='PrettyPrintTree',
-    version='1.3',
+    version='1.31',
     author="Aharon Sambol",
     author_email='email@example.com',
     py_modules=find_packages('PrettyPrint'),
@@ -17,5 +17,8 @@ setup(
     description='A tool to print trees to the console',
     long_description=long_description,
     long_description_content_type="text/markdown",
+    install_requires=[
+        'colorama',
+    ],
 
 )
