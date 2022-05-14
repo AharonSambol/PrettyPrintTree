@@ -2,13 +2,13 @@
 
 This package allows you to print the tree datastructure in a readable fashion (in python).
 It supports trees with any kind of data (as long it can be turned into a string).
-And even supports multilined nodes (as in strings with \n).
+And even supports multi lined nodes (as in strings with \n).
 
 # Documentation
 
 I tried to make this as flexible as possible, so in order to support multiple types of trees
 you need to explain to the program how to print your tree. The way to accomplish this is by passing 2 lambdas:
-1)  get_children: Given a node of your tree type returns a list of all its children (from left to right).
+1)  get_children: Given a node of your tree type returns an iterable of all its children (from left to right).
     For example if this is your tree implementation:
     ```
     class Tree:
@@ -69,7 +69,7 @@ pt(tree)
 
 # Other Settings
 
-## Trim:
+## Trim
 Say you only want to print the first few characters of each node (in order to keep the tree small for readability),
 then you can set trim to a specific amount of characters.
 
@@ -79,7 +79,7 @@ pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, trim=5)
 ![plot](./ExampleImages/trim.JPG)
 
 
-## Return Instead of Print:
+## Return Instead of Print
 Instead of printing the tree it can return the string instead if you prefer.
 
 ```
@@ -87,7 +87,8 @@ to_str = PrettyPrintTree(lambda x: x.children, lambda x: x.val, return_instead_o
 tree_as_str = to_str(tree)
 ```
 
-## Color:
+
+## Color
 You can change the bg color of each node, or even just not use color.
 
 ```
@@ -104,7 +105,7 @@ pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, color=None)
 ![plot](./ExampleImages/no_color.JPG)
 
 
-## Border:
+## Border
 You can also surround each node with a little border:
 ```
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, border=True)
@@ -112,7 +113,7 @@ pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, border=True)
 ![plot](./ExampleImages/border.JPG)
 
 
-## Escape NewLines:
+## Escape NewLines
 You can escape \n so that each node will be printed on one line.
 Note: \\n wil be escaped into \\\\n so that you can tell the difference
 ```
@@ -121,10 +122,35 @@ pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, show_newline_literal
 ![plot](./ExampleImages/new_line.JPG)
 
 
-## Start Message:
+## Max Depth
+You can specify a max depth so that it will only print nodes up to that depth.
+This can be done either at the start:
+```
+pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, max_depth=10)
+```
+Or when calling the function:
+```
+pt(tree, max_depth=5)
+```
+This will override the max depth set at the start (if any) for this time only.
+To have no max depth, you can set it to -1.
+
+
+## Start Message
 You can give a lambda that will be given the tree and will return a string which will be printed before the tree.
 ```
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, start_message=lambda node: f'printing tree of type {node.typ}')
 ```
 ![plot](./ExampleImages/msg.JPG)
 
+# Advanced Examples
+
+## Filtering
+
+To filter specific nodes all you need to do is add a filter in the get_children lambda, eg:
+```
+PrettyPrintTree(lambda node: filter(lambda n: "to print" in str(n.val), node.children), ...
+```
+```
+PrettyPrintTree(lambda node: [n for n in node.children if n.val > 3.141], ...
+```

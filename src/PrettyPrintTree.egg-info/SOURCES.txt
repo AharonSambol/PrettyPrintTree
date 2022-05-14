@@ -1,0 +1,7 @@
+README.md
+setup.cfg
+setup.py
+src/PrettyPrintTree.egg-info/PKG-INFO
+src/PrettyPrintTree.egg-info/SOURCES.txt
+src/PrettyPrintTree.egg-info/dependency_links.txt
+src/PrettyPrintTree.egg-info/top_level.txt

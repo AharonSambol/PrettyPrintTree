@@ -5,14 +5,15 @@ from typing import *
 
 class PrettyPrintTree:
     def __init__(self,
-                 get_children: Callable[[object], List],
+                 get_children: Callable[[object], Iterable],
                  get_val: Callable[[object], object],
                  show_newline_literal: bool = False,
                  return_instead_of_print: bool = False,
                  trim: bool = False,
                  start_message: Callable[[object], str] = None,
                  color: str | None = Back.LIGHTBLACK_EX,
-                 border: bool = False
+                 border: bool = False,
+                 max_depth: int = -1
                  ):
         # this is a lambda which returns a list of all the children
         # in order to support trees of different kinds eg:
@@ -29,10 +30,13 @@ class PrettyPrintTree:
         self.start_message = start_message
         self.color = color
         self.border = border
+        self.max_depth = max_depth
 
-    def __call__(self, node):
+    def __call__(self, node, max_depth: int = 0):
         if self.start_message is not None and not self.dont_print:
             print(self.start_message(node))
+        if max_depth:
+            self.max_depth = max_depth
         res = self.tree_to_str(node)
         is_node = lambda x: (x.startswith('[') or
                              (x.startswith('│') and x != '│') or
@@ -57,40 +61,46 @@ class PrettyPrintTree:
         longest = max(len(x) for x in lst_val)
         return [[f'{x}{" " * (longest - len(x))}'] for x in lst_val]
 
-    def tree_to_str(self, node):
+    def tree_to_str(self, node, depth=0):
         val = self.get_val(node)
-        if len(self.get_children(node)) == 0:
+        children = self.get_children(node)
+        if not isinstance(children, list):
+            children = list(children)
+        if len(children) == 0:
             if len(val) == 1:
                 return [['[' + val[0][0] + ']']]
             return self.format_box("", val)
         to_print = [[]]
         spacing = 0
-        for child in self.get_children(node):
-            child_print = self.tree_to_str(child)
-            for l, line in enumerate(child_print):
-                if l + 1 >= len(to_print):
-                    to_print.append([])
-                if l == 0:
-                    len_line = len("".join(line))
-                    middle_of_child = len_line - sum(divmod(len(line[-1]), 2))
-                    len_to_print_0 = len("".join(to_print[0]))
-                    to_print[0].append((spacing - len_to_print_0 + middle_of_child) * " " + '┬')
-                to_print[l + 1].append(' ' * (spacing - len("".join(to_print[l + 1]))))
-                to_print[l + 1].extend(line)
-            spacing = max(len("".join(x)) for x in to_print) + 1
+        if depth + 1 != self.max_depth:
+            for child in children:
+                child_print = self.tree_to_str(child, depth=depth+1)
+                for l, line in enumerate(child_print):
+                    if l + 1 >= len(to_print):
+                        to_print.append([])
+                    if l == 0:
+                        len_line = len("".join(line))
+                        middle_of_child = len_line - sum(divmod(len(line[-1]), 2))
+                        len_to_print_0 = len("".join(to_print[0]))
+                        to_print[0].append((spacing - len_to_print_0 + middle_of_child) * " " + '┬')
+                    to_print[l + 1].append(' ' * (spacing - len("".join(to_print[l + 1]))))
+                    to_print[l + 1].extend(line)
+                spacing = max(len("".join(x)) for x in to_print) + 1
 
-        if len(to_print[0]) != 1:
-            new_lines = "".join(to_print[0])
-            space_before = len(new_lines) - len(new_lines := new_lines.strip())
-            new_lines = " " * space_before + '┌' + new_lines[1:-1].replace(' ', '─') + '┐'
-            pipe_pos = middle = len(new_lines) - sum(divmod(len(new_lines.strip()), 2))
-            new_ch = {'─': '┴', '┬': '┼', '┌': '├', '┐': '┤'}[new_lines[middle]]
-            new_lines = new_lines[:middle] + new_ch + new_lines[middle + 1:]
-            to_print[0] = [new_lines]
+            if len(to_print[0]) != 1:
+                new_lines = "".join(to_print[0])
+                space_before = len(new_lines) - len(new_lines := new_lines.strip())
+                new_lines = " " * space_before + '┌' + new_lines[1:-1].replace(' ', '─') + '┐'
+                pipe_pos = middle = len(new_lines) - sum(divmod(len(new_lines.strip()), 2))
+                new_ch = {'─': '┴', '┬': '┼', '┌': '├', '┐': '┤'}[new_lines[middle]]
+                new_lines = new_lines[:middle] + new_ch + new_lines[middle + 1:]
+                to_print[0] = [new_lines]
+            else:
+                to_print[0][0] = to_print[0][0][:-1] + '│'
+                pipe_pos = len(to_print[0][0]) - 1
+            spacing = " " * (pipe_pos - sum(divmod(len(val[0][0]), 2)))
         else:
-            to_print[0][0] = to_print[0][0][:-1] + '│'
-            pipe_pos = len(to_print[0][0]) - 1
-        spacing = " " * (pipe_pos - sum(divmod(len(val[0][0]), 2)))
+            spacing = ""
         if len(val) == 1:
             val = [[spacing, f'[{val[0][0]}]']]
         else:
