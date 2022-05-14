@@ -6,7 +6,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='PrettyPrintTree',
-    version='1.16',
+    version='1.17',
     author="Aharon Sambol",
     author_email='email@example.com',
     py_modules=find_packages('src'),
