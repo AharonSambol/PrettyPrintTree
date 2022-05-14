@@ -11,7 +11,7 @@ class PrettyPrintTree:
                  return_instead_of_print: bool = False,
                  trim: bool = False,
                  start_message: Callable[[object], str] = None,
-                 color: str | None = Back.LIGHTBLACK_EX,
+                 color=Back.LIGHTBLACK_EX,
                  border: bool = False,
                  max_depth: int = -1
                  ):
@@ -40,7 +40,7 @@ class PrettyPrintTree:
         res = self.tree_to_str(node)
         is_node = lambda x: (x.startswith('[') or
                              (x.startswith('│') and x != '│') or
-                             len(x) > 1 and x[1:-1] == '─' * (len(x)-2) and x[0] + x[-1] in ['┌┐', '└┘'])
+                             len(x) > 1 and x[1:-1] == '─' * (len(x) - 2) and x[0] + x[-1] in ['┌┐', '└┘'])
         lines = ["".join(self.color_txt(x) if is_node(x) else x for x in line) for line in res]
         if self.dont_print:
             if self.start_message:
@@ -74,7 +74,7 @@ class PrettyPrintTree:
         spacing = 0
         if depth + 1 != self.max_depth:
             for child in children:
-                child_print = self.tree_to_str(child, depth=depth+1)
+                child_print = self.tree_to_str(child, depth=depth + 1)
                 for l, line in enumerate(child_print):
                     if l + 1 >= len(to_print):
                         to_print.append([])
