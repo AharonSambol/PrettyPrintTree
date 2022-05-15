@@ -87,6 +87,15 @@ pt(tree)
 
 # Other Settings
 
+
+## Horizontal
+You can print trees from left to right (instead of up to down)
+```
+pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, horizontal=True)
+```
+![img.png](img.png)
+
+
 ## Trim
 Say you only want to print the first few characters of each node (in order to keep the tree small for readability),
 then you can set trim to a specific amount of characters.
