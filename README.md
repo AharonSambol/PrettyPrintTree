@@ -1,7 +1,9 @@
 # PrettyPrintTree
 
 This package allows you to print the tree datastructure in a readable fashion (in python).
+
 It supports trees with any kind of data (as long it can be turned into a string).
+
 And even supports multi lined nodes (as in strings with \n).
 
 # Install
@@ -131,6 +133,7 @@ pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, border=True)
 
 ## Escape NewLines
 You can escape \n so that each node will be printed on one line.
+
 Note: \\n wil be escaped into \\\\n so that you can tell the difference
 ```
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, show_newline_literal=True)

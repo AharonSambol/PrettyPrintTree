@@ -9,11 +9,12 @@ class PrettyPrintTree:
                  get_val: Callable[[object], object],
                  show_newline_literal: bool = False,
                  return_instead_of_print: bool = False,
-                 trim: bool = False,
+                 trim=False,
                  start_message: Callable[[object], str] = None,
                  color=Back.LIGHTBLACK_EX,
                  border: bool = False,
-                 max_depth: int = -1
+                 max_depth: int = -1,
+                 horizontal: bool = False
                  ):
         # this is a lambda which returns a list of all the children
         # in order to support trees of different kinds eg:
@@ -31,15 +32,20 @@ class PrettyPrintTree:
         self.color = color
         self.border = border
         self.max_depth = max_depth
+        self.horizontal = horizontal
 
     def __call__(self, node, max_depth: int = 0):
         if self.start_message is not None and not self.dont_print:
             print(self.start_message(node))
         if max_depth:
             self.max_depth = max_depth
-        res = self.tree_to_str(node)
+        if self.horizontal:
+            res = self.tree_to_str_horizontal(node)
+        else:
+            res = self.tree_to_str(node)
+
         is_node = lambda x: (x.startswith('[') or
-                             (x.startswith('│') and x != '│') or
+                             (x.startswith('│') and x.strip() != '│') or
                              len(x) > 1 and x[1:-1] == '─' * (len(x) - 2) and x[0] + x[-1] in ['┌┐', '└┘'])
         lines = ["".join(self.color_txt(x) if is_node(x) else x for x in line) for line in res]
         if self.dont_print:
@@ -107,6 +113,96 @@ class PrettyPrintTree:
             val = self.format_box(spacing, val)
         return val + to_print
 
+    def tree_to_str_horizontal(self, node, depth=0):
+        val = self.get_val(node)
+        children = self.get_children(node)
+        if not isinstance(children, list):
+            children = list(children)
+        if len(children) == 0:
+            if len(val) == 1:
+                return [['-', '[' + val[0][0] + ']']]
+            box = self.format_box("", val)
+            box[0][0] = '-'
+            for i in range(1, len(box)):
+                box[i][0] = ' '
+            return box
+        to_print = []
+        if depth + 1 != self.max_depth:
+            for i, child in enumerate(children):
+                if i != 0:
+                    to_print.extend([[]])
+                child_print = self.tree_to_str_horizontal(child, depth=depth + 1)
+                to_print.extend(child_print)
+        val_width = max(len("".join(x)) for x in val) + 2
+        middle_children = sum(divmod(len(to_print), 2))
+        middle_this = sum(divmod(len(val), 2))
+        pos = max(0, middle_children - middle_this)
+        first = last = -1
+        added = False
+        for r, row in enumerate(to_print[:pos]):
+            if len("".join(row)) > 0 and "".join(row)[0] == '-':
+                while row[0] == '':
+                    row.pop(0)
+                row[0] = ('┌' if first == -1 else '├') + row[0][1:]
+                if first == -1:
+                    first = r
+                last = r
+            elif first != -1:
+                if row:
+                    row[0] = '│' + row[0][1:]
+                else:
+                    row.append('│')
+            row.insert(0, " " * (val_width + 1))  # + "├" "┬" "¬" "┼" "┤" "│" '┌'
+        for r, row in enumerate(val):
+            if len(to_print) == r+pos:
+                to_print.append([])
+            if "".join(to_print[r+pos]).startswith('-'):
+                while to_print[r+pos][0] == '':
+                    to_print[r+pos].pop(0)
+                symbol = {'TT': '┌', 'TF': '├', 'FT': '┬', 'FF': '┼'}[str(added)[0] + str(first == -1)[0]]
+                to_print[r+pos] = [symbol] + to_print[r+pos][1:]
+                if first == -1:
+                    first = r + pos
+                last = r + pos
+            else:
+                if to_print[r+pos]:
+                    to_print[r + pos][0] = ('┤' if not added else '│') + to_print[r + pos][0][1:]
+                else:
+                    to_print[r + pos].append('┤' if not added else '│')
+                if not added:
+                    last = r + pos
+            added = True
+            to_print[r+pos].insert(0, '[' + "".join(row) + ']')
+            if r + 1 == sum(divmod(len(val), 2)):
+                to_print[r + pos].insert(0, '-')
+            else:
+                to_print[r + pos].insert(0, ' ')
+            to_print[r+pos].insert(2, "  " * (val_width - len('[' + "".join(row) + ']')))
+        for r, row in enumerate(to_print[pos + len(val):]):
+            if len("".join(row)) > 0 and "".join(row)[0] == '-':
+                while row[0] == '':
+                    row.pop(0)
+                row[0] = '├' + row[0][1:]
+                last = r + pos + len(val)
+            else:
+                if row:
+                    row[0] = '│' + row[0][1:]
+                else:
+                    row.append('│')
+            row.insert(0, " " * (val_width + 1))
+        indx = 0
+        while to_print[last][indx].strip() != '' or to_print[last][indx+1].startswith('['):
+            indx += 1
+        indx += 1
+        to_print[last][indx] = {'┬': '─', '├': '└', '┌': '─', '┼': '┴', '┤': '┘'}[to_print[last][indx]]
+        for i in range(last + 1, len(to_print)):
+            indx = 0
+            while to_print[i][indx].strip() != '' or to_print[i][indx+1].startswith('['):
+                indx += 1
+            indx += 1
+            to_print[i][indx] = ' ' + to_print[i][indx][1:]
+        return to_print
+
     def color_txt(self, x):
         spaces = " " * (len(x) - len(x.lstrip()))
         txt = x.lstrip() if self.border else (" " + x.lstrip()[1:-1] + " ")
@@ -121,43 +217,3 @@ class PrettyPrintTree:
             bottom = [[spacing, '└' + '─' * (len(val[0][1]) - 2) + '┘']]
             return top + val + bottom
         return val
-
-# ---------- example: ----------
-# class Tree:
-#     def __init__(self, val):
-#         self.val = val
-#         self.children = []
-#
-#     def add_child(self, child):
-#         self.children.append(child)
-#         return child
-#
-#
-# class Person:
-#     def __init__(self, age, name):
-#         self.age = age
-#         self.name = name
-#
-#     def __str__(self):
-#         return f"""Person {{
-#     age: {self.age},
-#     name: {self.name}
-# }}"""
-#
-#
-# tree = Tree(0)
-# r = tree.add_child(Tree([1, 2, 3]))
-# l = tree.add_child(Tree({1: "qo", 24: " 5326"}))
-# rl = r.add_child(Tree(43216))
-# rr = r.add_child(Tree(Person(17, "Aharon")))
-# rr.add_child(Tree(0))
-# lr = l.add_child(Tree(5))
-# lm = l.add_child(Tree("\n"))
-# ll = l.add_child(Tree(6))
-# rl.add_child(Tree("!!!!"))
-# rlm = rl.add_child(Tree("!!!!\\n!!"))
-# rl.add_child(Tree("!!!!!!"))
-# rlm.add_child(Tree("looooong"))
-# rlm.add_child(Tree("looooong"))
-# pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val)
-# pt(node=tree)
