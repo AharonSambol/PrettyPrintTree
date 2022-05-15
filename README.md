@@ -23,7 +23,7 @@ from PrettyPrint import PrettyPrintTree
 # Documentation
 
 I tried to make this as flexible as possible, so in order to support multiple types of trees
-you need to explain to the program how to print your tree. The way to accomplish this is by passing 2 lambdas:
+you need to explain to the program how to print your tree. The way to accomplish this is by passing 2 lambdas (or any other Callable):
 1)  get_children: Given a node of your tree type returns an iterable of all its children (from left to right).
     For example if this is your tree implementation:
     ```
