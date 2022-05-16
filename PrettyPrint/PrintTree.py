@@ -1,12 +1,27 @@
 import re
 from colorama import Back, Style
 from typing import *
+from collections.abc import Iterable
+
+
+class DictTree:
+    def __init__(self, val, children):
+        self.val = val
+        if isinstance(children, dict):
+            self.children = [DictTree(v, c) for v, c in children.items()]
+        elif isinstance(children, Iterable):
+            self.children = children
+        else:
+            self.children = [children]
 
 
 class PrettyPrintTree:
+    VERTICAL = False
+    HORIZONTAL = True
+
     def __init__(self,
-                 get_children: Callable[[object], Iterable],
-                 get_val: Callable[[object], object],
+                 get_children: Callable[[object], Iterable] = None,
+                 get_val: Callable[[object], object] = None,
                  show_newline_literal: bool = False,
                  return_instead_of_print: bool = False,
                  trim=False,
@@ -14,15 +29,16 @@ class PrettyPrintTree:
                  color=Back.LIGHTBLACK_EX,
                  border: bool = False,
                  max_depth: int = -1,
-                 horizontal: bool = False
+                 orientation: bool = False
                  ):
         # this is a lambda which returns a list of all the children
         # in order to support trees of different kinds eg:
         #   self.child_right, self.child_left... or
         #   self.children = []... or
         #   self.children = {}... or anything else
-        self.get_children = get_children
-        self.get_node_val = get_val
+
+        self.get_children = (lambda x: x.children) if get_children is None else get_children
+        self.get_node_val = (lambda x: x.value) if get_val is None else get_val
         # only display first x chars
         self.trim = trim
         # if true will display \n as \n and not as new lines
@@ -32,14 +48,24 @@ class PrettyPrintTree:
         self.color = color
         self.border = border
         self.max_depth = max_depth
-        self.horizontal = horizontal
+        self.orientation = orientation
+
+    def print_dict(self, dic, name='DICT', max_depth: int = 0):
+        if max_depth:
+            self.max_depth = max_depth
+        self.get_children = lambda x: x.children if isinstance(x, DictTree) else []
+        self.get_node_val = lambda x: x.val if isinstance(x, DictTree) else x
+        self(DictTree(name, dic))
 
     def __call__(self, node, max_depth: int = 0):
+        if isinstance(node, dict):
+            self.print_dict(node, max_depth=max_depth)
+            return
         if self.start_message is not None and not self.dont_print:
             print(self.start_message(node))
         if max_depth:
             self.max_depth = max_depth
-        if self.horizontal:
+        if self.orientation == PrettyPrintTree.HORIZONTAL:
             res = self.tree_to_str_horizontal(node)
         else:
             res = self.tree_to_str(node)

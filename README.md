@@ -72,6 +72,19 @@ then you can call it whenever you want without needing to pass the lambdas each 
 ## Examples
 
 ```
+from PrintTree import PrettyPrintTree
+
+
+class Tree:
+    def __init__(self, value):
+        self.val = value
+        self.children = []
+
+    def add_child(self, child):
+        self.children.append(child)
+        return child
+        
+        
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val)
 tree = Tree(1)
 child1 = tree.add_child(Tree(2))
@@ -91,7 +104,7 @@ pt(tree)
 ## Horizontal
 You can print trees from left to right (instead of up to down)
 ```
-pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, horizontal=True)
+pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, orientation=PrettyPrintTree.HORIZONTAL)
 ```
 ![img.png](img.png)
 
@@ -170,6 +183,22 @@ You can give a lambda that will be given the tree and will return a string which
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, start_message=lambda node: f'printing tree of type {node.typ}')
 ```
 ![plot](./ExampleImages/msg.JPG)
+
+
+## Dictionaries
+
+Printing dictionaries is also an option:
+
+```
+some_dict = {'foo': 1, 'bar': ('a', 'b'), 'qux': {'foo': 1, 'bar': ['a', 'b']}}
+pt = PrettyPrintTree()
+# either:
+pt(some_dict)
+# or:
+pt.print_dict(some_dict, name="DICT", max_depth=10)
+```
+![plot](./ExampleImages/dic.JPG)
+
 
 # Advanced Examples
 
