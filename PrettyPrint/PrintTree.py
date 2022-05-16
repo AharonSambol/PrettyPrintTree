@@ -5,12 +5,19 @@ from collections.abc import Iterable
 
 
 class DictTree:
-    def __init__(self, val, children):
+    def __init__(self, val, children=None):
+        if children is None:
+            if isinstance(val, Iterable) and not isinstance(val, str):
+                children = val
+                val = str(type(val)).removeprefix("<class '").removesuffix("'>").upper()
+            else:
+                children = []
+
         self.val = val
         if isinstance(children, dict):
             self.children = [DictTree(v, c) for v, c in children.items()]
-        elif isinstance(children, Iterable):
-            self.children = children
+        elif isinstance(children, Iterable) and not isinstance(children, str):
+            self.children = [DictTree(x) for x in children]
         else:
             self.children = [children]
 
@@ -29,7 +36,7 @@ class PrettyPrintTree:
                  color=Back.LIGHTBLACK_EX,
                  border: bool = False,
                  max_depth: int = -1,
-                 orientation: bool = False
+                 default_orientation: bool = False
                  ):
         # this is a lambda which returns a list of all the children
         # in order to support trees of different kinds eg:
@@ -48,24 +55,26 @@ class PrettyPrintTree:
         self.color = color
         self.border = border
         self.max_depth = max_depth
-        self.orientation = orientation
+        self.default_orientation = default_orientation
 
-    def print_dict(self, dic, name='DICT', max_depth: int = 0):
+    def print_json(self, dic, name='JSON', max_depth: int = 0):
         if max_depth:
             self.max_depth = max_depth
         self.get_children = lambda x: x.children if isinstance(x, DictTree) else []
         self.get_node_val = lambda x: x.val if isinstance(x, DictTree) else x
         self(DictTree(name, dic))
 
-    def __call__(self, node, max_depth: int = 0):
-        if isinstance(node, dict):
-            self.print_dict(node, max_depth=max_depth)
+    def __call__(self, node, max_depth: int = 0, orientation=None):
+        if orientation is not None:
+            self.default_orientation = orientation
+        if isinstance(node, dict) or isinstance(node, list) or isinstance(node, tuple):
+            self.print_json(node, max_depth=max_depth)
             return
         if self.start_message is not None and not self.dont_print:
             print(self.start_message(node))
         if max_depth:
             self.max_depth = max_depth
-        if self.orientation == PrettyPrintTree.HORIZONTAL:
+        if self.default_orientation == PrettyPrintTree.HORIZONTAL:
             res = self.tree_to_str_horizontal(node)
         else:
             res = self.tree_to_str(node)
