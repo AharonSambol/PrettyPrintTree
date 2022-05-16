@@ -219,6 +219,8 @@ You can also label the branches in your tree.
 
 The label lambda should return a string, if there should be no label then None or False.
 
+NOTE: Currently this only works on vertical trees 
+
 ```python
 pt = PrettyPrintTree(
     lambda x: x.children, 
