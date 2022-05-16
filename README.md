@@ -213,6 +213,21 @@ pt.print_json(some_json, name="DICT", max_depth=10)
 ![plot](./ExampleImages/dic.JPG)
 
 
+## Labels
+
+You can also label the branches in your tree.
+
+The label lambda should return a string, if there should be no label then None or False.
+
+```python
+pt = PrettyPrintTree(
+    lambda x: x.children, 
+    lambda x: x.val, 
+    lambda x: x.label
+)
+```
+![plot](./ExampleImages/statistic.JPG)
+
 # Advanced Examples
 
 ## Filtering

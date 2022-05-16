@@ -29,6 +29,8 @@ class PrettyPrintTree:
     def __init__(self,
                  get_children: Callable[[object], Iterable] = None,
                  get_val: Callable[[object], object] = None,
+                 get_label: Callable[[object], object] = None,
+                 *,
                  show_newline_literal: bool = False,
                  return_instead_of_print: bool = False,
                  trim=False,
@@ -46,6 +48,7 @@ class PrettyPrintTree:
 
         self.get_children = (lambda x: x.children) if get_children is None else get_children
         self.get_node_val = (lambda x: x.value) if get_val is None else get_val
+        self.get_label = get_label
         # only display first x chars
         self.trim = trim
         # if true will display \n as \n and not as new lines
@@ -67,6 +70,13 @@ class PrettyPrintTree:
     def __call__(self, node, max_depth: int = 0, orientation=None):
         if orientation is not None:
             self.default_orientation = orientation
+        if self.default_orientation == PrettyPrintTree.HORIZONTAL and self.get_label is not None:
+            print("""  ^                                                                    ^
+ /^\\                                                                  /^\\
+ /^\\                                                                  /^\\
+//|\\\\     As of now labels are only supported for vertical trees     //|\\\\
+//|\\\\                                                                //|\\\\
+  |                                                                    |""")
         if isinstance(node, dict) or isinstance(node, list) or isinstance(node, tuple):
             self.print_json(node, max_depth=max_depth)
             return
@@ -109,8 +119,14 @@ class PrettyPrintTree:
             children = list(children)
         if len(children) == 0:
             if len(val) == 1:
-                return [['[' + val[0][0] + ']']]
-            return self.format_box("", val)
+                res = [['[' + val[0][0] + ']']]
+                if self.get_label:
+                    self.put_label(node, res)
+                return res
+            res = self.format_box("", val)
+            if self.get_label:
+                self.put_label(node, res)
+            return res
         to_print = [[]]
         spacing = 0
         if depth + 1 != self.max_depth:
@@ -142,11 +158,31 @@ class PrettyPrintTree:
             spacing = " " * (pipe_pos - sum(divmod(len(val[0][0]), 2)))
         else:
             spacing = ""
+
         if len(val) == 1:
             val = [[spacing, f'[{val[0][0]}]']]
         else:
             val = self.format_box(spacing, val)
-        return val + to_print
+        to_print = val + to_print
+
+        if self.get_label:
+            self.put_label(node, to_print)
+        return to_print
+
+    def put_label(self, node, res):
+        label = self.get_label(node)
+        label = str(label) if label else '|'
+        if len(label) > len(res[0][-1]):
+            diff = len(label) - len(res[0][-1])
+            for row in res:
+                row[0] = " " * diff + row[0]
+        if len(res[0]) == 2:
+            d, m = divmod(len(res[0][-1]), 2)
+            pos = len(res[0][0]) + d - (1 * (1 - m))
+        else:
+            pos = len(res[0][0]) // 2
+        res.insert(0, [" " * pos, "|"])
+        res.insert(0, [" " * (pos - len(label) // 2), label])
 
     def tree_to_str_horizontal(self, node, depth=0):
         val = self.get_val(node)
