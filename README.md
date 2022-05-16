@@ -8,14 +8,14 @@ And even supports multi lined nodes (as in strings with \n).
 
 # Install
 
-```
+```bash
 pip install PrettyPrintTree
 ```
 
 
 # Import
 
-```
+```python
 from PrettyPrint import PrettyPrintTree
 ```
 
@@ -26,38 +26,38 @@ I tried to make this as flexible as possible, so in order to support multiple ty
 you need to explain to the program how to print your tree. The way to accomplish this is by passing 2 lambdas (or any other Callable):
 1)  get_children: Given a node of your tree type returns an iterable of all its children (from left to right).
     For example if this is your tree implementation:
-    ```
+    ```python
     class Tree:
         def __init__(self, val):
             self.val = val
             self.children = []
     ```
-    Then get_children would be as simple as: 
-    ```
+    Then get_children would be as simple as:
+    ```python
     lambda node: node.children
     ```
     Or if your tree implementation is:
-    ```
+    ```python
     class Tree:
         def __init__(self, val):
             self.val = val
             self.child_right = None
             self.child_left = None
     ```
-    Then get_children would be: 
-    ```
+    Then get_children would be:
+    ```python
     lambda node: [node.child_left, node.child_right]
     ```
 
 2)  get_value: Given a node of your tree type returns that node's value
     for example if your tree implementation is:
-    ```
+    ```python
     class Tree:
         def __init__(self, val):
             self.val = val
     ```
-    then get_value would be: 
-    ```
+    then get_value would be:
+    ```python
     lambda node: node.val
     ```
     (if the value of the tree doesn't implement \_\_str\_\_ get_value should turn it into a string)
@@ -71,7 +71,7 @@ then you can call it whenever you want without needing to pass the lambdas each 
 
 ## Examples
 
-```
+```python
 from PrintTree import PrettyPrintTree
 
 
@@ -83,8 +83,8 @@ class Tree:
     def add_child(self, child):
         self.children.append(child)
         return child
-        
-        
+
+
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val)
 tree = Tree(1)
 child1 = tree.add_child(Tree(2))
@@ -103,7 +103,7 @@ pt(tree)
 
 ## Horizontal
 You can print trees from left to right (instead of up to down)
-```
+```python
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, orientation=PrettyPrintTree.HORIZONTAL)
 ```
 ![img.png](img.png)
@@ -113,7 +113,7 @@ pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, orientation=PrettyPr
 Say you only want to print the first few characters of each node (in order to keep the tree small for readability),
 then you can set trim to a specific amount of characters.
 
-```
+```python
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, trim=5)
 ```
 ![plot](./ExampleImages/trim.JPG)
@@ -122,7 +122,7 @@ pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, trim=5)
 ## Return Instead of Print
 Instead of printing the tree it can return the string instead if you prefer.
 
-```
+```python
 to_str = PrettyPrintTree(lambda x: x.children, lambda x: x.val, return_instead_of_print=True)
 tree_as_str = to_str(tree)
 ```
@@ -131,14 +131,14 @@ tree_as_str = to_str(tree)
 ## Color
 You can change the bg color of each node, or even just not use color.
 
-```
+```python
 from colorama import Back
 
 # change color to black:
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, color=Back.BLACK)
 ```
 ![plot](./ExampleImages/black.JPG)
-```
+```python
 # without any color:
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, color=None)
 ```
@@ -147,7 +147,7 @@ pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, color=None)
 
 ## Border
 You can also surround each node with a little border:
-```
+```python
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, border=True)
 ```
 ![plot](./ExampleImages/border.JPG)
@@ -156,8 +156,8 @@ pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, border=True)
 ## Escape NewLines
 You can escape \n so that each node will be printed on one line.
 
-Note: \\n wil be escaped into \\\\n so that you can tell the difference
-```
+Note: \\n will be escaped into \\\\n so that you can tell the difference
+```python
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, show_newline_literal=True)
 ```
 ![plot](./ExampleImages/new_line.JPG)
@@ -166,11 +166,11 @@ pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, show_newline_literal
 ## Max Depth
 You can specify a max depth so that it will only print nodes up to that depth.
 This can be done either at the start:
-```
+```python
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, max_depth=10)
 ```
 Or when calling the function:
-```
+```python
 pt(tree, max_depth=5)
 ```
 This will override the max depth set at the start (if any) for this time only.
@@ -179,8 +179,12 @@ To have no max depth, you can set it to -1.
 
 ## Start Message
 You can give a lambda that will be given the tree and will return a string which will be printed before the tree.
-```
-pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, start_message=lambda node: f'printing tree of type {node.typ}')
+```python
+pt = PrettyPrintTree(
+  lambda x: x.children,
+  lambda x: x.val,
+  start_message=lambda node: f'printing tree of type {type(node)}'
+)
 ```
 ![plot](./ExampleImages/msg.JPG)
 
@@ -189,7 +193,7 @@ pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, start_message=lambda
 
 Printing dictionaries is also an option:
 
-```
+```python
 some_dict = {'foo': 1, 'bar': ('a', 'b'), 'qux': {'foo': 1, 'bar': ['a', 'b']}}
 pt = PrettyPrintTree()
 # either:
@@ -205,9 +209,9 @@ pt.print_dict(some_dict, name="DICT", max_depth=10)
 ## Filtering
 
 To filter specific nodes all you need to do is add a filter in the get_children lambda, eg:
-```
+```python
 PrettyPrintTree(lambda node: filter(lambda n: "to print" in str(n.val), node.children), ...
 ```
-```
+```python
 PrettyPrintTree(lambda node: [n for n in node.children if n.val > 3.141], ...
 ```
