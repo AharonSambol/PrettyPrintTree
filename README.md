@@ -219,7 +219,9 @@ You can also label the branches in your tree.
 
 The label lambda should return a string, if there should be no label then None or False.
 
-NOTE: Currently this only works on vertical trees 
+NOTE: Currently this only works on vertical trees
+
+NOTE: Each label must be on a single line (no \n)
 
 ```python
 pt = PrettyPrintTree(
@@ -229,6 +231,20 @@ pt = PrettyPrintTree(
 )
 ```
 ![plot](./ExampleImages/statistic.JPG)
+
+You can even color the labels using label_color
+
+```python
+from colorama import Back
+
+pt = PrettyPrintTree(
+    lambda x: x.children, 
+    lambda x: x.val, 
+    lambda x: x.label,
+    label_color=Back.BLACK
+)
+```
+![plot](./ExampleImages/label_color.JPG)
 
 # Advanced Examples
 

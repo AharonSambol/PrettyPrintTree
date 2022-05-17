@@ -2,3 +2,7 @@ venv310real/
 .idea/
 PrettyPrint/test.py
 .gitignore
+dist
+build
+PrettyPrintTree.egg-info
+PrettyPrint/PrintGraph.py

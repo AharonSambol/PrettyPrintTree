@@ -31,6 +31,7 @@ class PrettyPrintTree:
                  get_val: Callable[[object], object] = None,
                  get_label: Callable[[object], object] = None,
                  *,
+                 label_color="",
                  show_newline_literal: bool = False,
                  return_instead_of_print: bool = False,
                  trim=False,
@@ -49,6 +50,7 @@ class PrettyPrintTree:
         self.get_children = (lambda x: x.children) if get_children is None else get_children
         self.get_node_val = (lambda x: x.value) if get_val is None else get_val
         self.get_label = get_label
+        self.label_color = label_color
         # only display first x chars
         self.trim = trim
         # if true will display \n as \n and not as new lines
@@ -76,7 +78,8 @@ class PrettyPrintTree:
  /^\\                                                                  /^\\
 //|\\\\     As of now labels are only supported for vertical trees     //|\\\\
 //|\\\\                                                                //|\\\\
-  |                                                                    |""")
+  |                                                                    |
+""")
         if isinstance(node, dict) or isinstance(node, list) or isinstance(node, tuple):
             self.print_json(node, max_depth=max_depth)
             return
@@ -89,7 +92,7 @@ class PrettyPrintTree:
         else:
             res = self.tree_to_str(node)
 
-        is_node = lambda x: (x.startswith('[') or
+        is_node = lambda x: (x.startswith('[') or x.startswith('|') or
                              (x.startswith('│') and x.strip() != '│') or
                              len(x) > 1 and x[1:-1] == '─' * (len(x) - 2) and x[0] + x[-1] in ['┌┐', '└┘'])
         lines = ["".join(self.color_txt(x) if is_node(x) else x for x in line) for line in res]
@@ -171,7 +174,7 @@ class PrettyPrintTree:
 
     def put_label(self, node, res):
         label = self.get_label(node)
-        label = str(label) if label else '|'
+        label = ('|' + str(label) + '|') if label else '│'
         if len(label) > len(res[0][-1]):
             diff = len(label) - len(res[0][-1])
             for row in res:
@@ -181,7 +184,7 @@ class PrettyPrintTree:
             pos = len(res[0][0]) + d - (1 * (1 - m))
         else:
             pos = len(res[0][0]) // 2
-        res.insert(0, [" " * pos, "|"])
+        res.insert(0, [" " * pos, "│"])
         res.insert(0, [" " * (pos - len(label) // 2), label])
 
     def tree_to_str_horizontal(self, node, depth=0):
@@ -204,6 +207,7 @@ class PrettyPrintTree:
                     to_print.extend([[]])
                 child_print = self.tree_to_str_horizontal(child, depth=depth + 1)
                 to_print.extend(child_print)
+
         val_width = max(len("".join(x)) for x in val) + 2
         middle_children = sum(divmod(len(to_print), 2))
         middle_this = sum(divmod(len(val), 2))
@@ -238,8 +242,10 @@ class PrettyPrintTree:
             else:
                 if to_print[r+pos]:
                     to_print[r + pos][0] = ('┤' if not added else '│') + to_print[r + pos][0][1:]
-                else:
+                elif depth + 1 != self.max_depth:
                     to_print[r + pos].append('┤' if not added else '│')
+                else:
+                    to_print[r + pos].append('')
                 if not added:
                     last = r + pos
             added = True
@@ -265,7 +271,7 @@ class PrettyPrintTree:
         while to_print[last][indx].strip() != '' or to_print[last][indx+1].startswith('['):
             indx += 1
         indx += 1
-        to_print[last][indx] = {'┬': '─', '├': '└', '┌': '─', '┼': '┴', '┤': '┘'}[to_print[last][indx]]
+        to_print[last][indx] = {'┬': '─', '├': '└', '┌': '─', '┼': '┴', '┤': '┘', '': ''}[to_print[last][indx]]
         for i in range(last + 1, len(to_print)):
             indx = 0
             while to_print[i][indx].strip() != '' or to_print[i][indx+1].startswith('['):
@@ -275,9 +281,14 @@ class PrettyPrintTree:
         return to_print
 
     def color_txt(self, x):
-        spaces = " " * (len(x) - len(x.lstrip()))
-        txt = x.lstrip() if self.border else (" " + x.lstrip()[1:-1] + " ")
-        txt = self.color + txt + Style.RESET_ALL if self.color else txt
+        spaces = " " * (len(x) - len(x := x.lstrip()))
+        is_label = x.startswith('|')
+        if is_label:
+            x = f' { x[1:-1] } '
+            x = (self.label_color + x + Style.RESET_ALL) if self.label_color else x
+            return spaces + x
+        txt = x if self.border else f' { x[1:-1] } '
+        txt = (self.color + txt + Style.RESET_ALL) if self.color else txt
         return spaces + txt
 
     def format_box(self, spacing, val):
