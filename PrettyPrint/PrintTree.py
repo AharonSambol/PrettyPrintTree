@@ -2,6 +2,10 @@ import re
 from colorama import Back, Style
 from typing import *
 from collections.abc import Iterable
+import sys
+
+if sys.version_info < (3, 7):
+    sys.exit('Sorry, Python < 3.7 is not supported')
 
 
 class DictTree:
@@ -122,7 +126,7 @@ class PrettyPrintTree:
             children = list(children)
         if len(children) == 0:
             if len(val) == 1:
-                res = [['[' + val[0][0] + ']']]
+                res = [[f'[{ val[0][0] }]']]
                 if self.get_label:
                     self.put_label(node, res)
                 return res
@@ -149,9 +153,11 @@ class PrettyPrintTree:
 
             if len(to_print[0]) != 1:
                 new_lines = "".join(to_print[0])
-                space_before = len(new_lines) - len(new_lines := new_lines.strip())
+                space_before = len(new_lines) - len(new_lines.strip())
+                new_lines = new_lines.strip()
+                ln_of_stripped = len(new_lines)
                 new_lines = " " * space_before + '┌' + new_lines[1:-1].replace(' ', '─') + '┐'
-                pipe_pos = middle = len(new_lines) - sum(divmod(len(new_lines.strip()), 2))
+                pipe_pos = middle = len(new_lines) - sum(divmod(ln_of_stripped, 2))
                 new_ch = {'─': '┴', '┬': '┼', '┌': '├', '┐': '┤'}[new_lines[middle]]
                 new_lines = new_lines[:middle] + new_ch + new_lines[middle + 1:]
                 to_print[0] = [new_lines]
@@ -281,7 +287,8 @@ class PrettyPrintTree:
         return to_print
 
     def color_txt(self, x):
-        spaces = " " * (len(x) - len(x := x.lstrip()))
+        spaces = " " * (len(x) - len(x.lstrip()))
+        x = x.lstrip()
         is_label = x.startswith('|')
         if is_label:
             x = f' { x[1:-1] } '

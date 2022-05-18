@@ -6,6 +6,9 @@ It supports trees with any kind of data (as long it can be turned into a string)
 
 And even supports multi lined nodes (as in strings with \n).
 
+# Supported Python Version
+
+
 # Install
 
 ```bash
@@ -217,7 +220,7 @@ pt.print_json(some_json, name="DICT", max_depth=10)
 
 You can also label the branches in your tree.
 
-The label lambda should return a string, if there should be no label then None or False.
+The label lambda should return a string indicating the label between the node and its parent, if there should be no label then None or False.
 
 NOTE: Currently this only works on vertical trees
 

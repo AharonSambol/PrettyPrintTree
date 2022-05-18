@@ -6,3 +6,4 @@ dist
 build
 PrettyPrintTree.egg-info
 PrettyPrint/PrintGraph.py
+PrettyPrint/Tests.py
