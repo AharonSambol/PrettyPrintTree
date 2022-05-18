@@ -8,6 +8,7 @@ And even supports multi lined nodes (as in strings with \n).
 
 # Supported Python Version
 
+python 3.7 and up
 
 # Install
 
