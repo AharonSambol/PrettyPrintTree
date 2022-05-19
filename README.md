@@ -262,6 +262,12 @@ PrettyPrintTree(lambda node: filter(lambda n: "to print" in str(n.val), node.chi
 PrettyPrintTree(lambda node: [n for n in node.children if n.val > 3.141], ...
 ```
 
+# C#
+
+I made a C# version too:
+https://github.com/AharonSambol/PrettyPrintTreeCSharp
+
+
 # Java
 
 I made a Java version too:
