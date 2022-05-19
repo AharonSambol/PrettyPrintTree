@@ -1,6 +1,6 @@
 # PrettyPrintTree
 
-This package allows you to print the tree datastructure in a readable fashion (in python).
+This package allows you to print the tree datastructure in a readable fashion (in Python).
 
 It supports trees with any kind of data (as long it can be turned into a string).
 
@@ -8,7 +8,7 @@ And even supports multi lined nodes (as in strings with \n).
 
 # Supported Python Version
 
-python 3.7 and up
+Python 3.7 and up
 
 # Install
 
@@ -261,3 +261,8 @@ PrettyPrintTree(lambda node: filter(lambda n: "to print" in str(n.val), node.chi
 ```python
 PrettyPrintTree(lambda node: [n for n in node.children if n.val > 3.141], ...
 ```
+
+# Java
+
+I made a Java version too:
+https://github.com/AharonSambol/PrettyPrintTreeJava
