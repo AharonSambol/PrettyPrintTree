@@ -6,6 +6,8 @@ It supports trees with any kind of data (as long it can be turned into a string)
 
 And even supports multi lined nodes (as in strings with \n).
 
+![plot](./ExampleImages/one_to_seven.JPG)
+
 # Supported Python Version
 
 Python 3.7 and up
@@ -76,7 +78,7 @@ then you can call it whenever you want without needing to pass the lambdas each 
 ## Examples
 
 ```python
-from PrintTree import PrettyPrintTree
+from PrettyPrint import PrettyPrintTree
 
 
 class Tree:
