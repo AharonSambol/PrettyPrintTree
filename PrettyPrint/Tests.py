@@ -1,6 +1,5 @@
-from colorama import Back
-
 from PrettyPrint import PrettyPrintTree
+from colorama import Back
 
 
 class Tree:
@@ -20,9 +19,9 @@ class Person:
         self.age = age
 
     def __str__(self):
-        return f"""Person {{
-    age: {self.age},
-    name: {self.name}
+        return f"""Person {{ 
+    age: {self.age}, 
+    name: {self.name} 
 }}"""
 
 
@@ -74,3 +73,4 @@ some_json = {'foo': 1, 'bar': (('a', 'a2'), 'b'), 'qux': {'foo': 1, 'arr': [{1: 
 PrettyPrintTree(color=Back.WHITE)(some_json)
 print()
 PrettyPrintTree().print_json(some_json, name="DICT", max_depth=3)
+
