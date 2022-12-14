@@ -91,7 +91,7 @@ class PrettyPrintTree:
 //|\\\\     As of now labels are only supported for vertical trees     //|\\\\
 //|\\\\                                                                //|\\\\
   |                                                                    |
-"""
+""",
             )
         if isinstance(node, dict) or isinstance(node, list) or isinstance(node, tuple):
             self.print_json(node, max_depth=max_depth)
@@ -164,10 +164,10 @@ class PrettyPrintTree:
                         middle_of_child = len_line - sum(divmod(len(line[-1]), 2))
                         len_to_print_0 = len("".join(to_print[0]))
                         to_print[0].append(
-                            (spacing - len_to_print_0 + middle_of_child) * " " + "┬"
+                            (spacing - len_to_print_0 + middle_of_child) * " " + "┬",
                         )
                     to_print[l + 1].append(
-                        " " * (spacing - len("".join(to_print[l + 1])))
+                        " " * (spacing - len("".join(to_print[l + 1]))),
                     )
                     to_print[l + 1].extend(line)
                 spacing = max(len("".join(x)) for x in to_print) + 1
@@ -288,7 +288,8 @@ class PrettyPrintTree:
             else:
                 to_print[r + pos].insert(0, " ")
             to_print[r + pos].insert(
-                2, "  " * (val_width - len("[" + "".join(row) + "]"))
+                2,
+                "  " * (val_width - len("[" + "".join(row) + "]")),
             )
         for r, row in enumerate(to_print[pos + len(val) :]):
             if len("".join(row)) > 0 and "".join(row)[0] == "-":
@@ -304,7 +305,7 @@ class PrettyPrintTree:
             row.insert(0, " " * (val_width + 1))
         indx = 0
         while to_print[last][indx].strip() != "" or to_print[last][indx + 1].startswith(
-            "["
+            "[",
         ):
             indx += 1
         indx += 1
@@ -319,7 +320,7 @@ class PrettyPrintTree:
         for i in range(last + 1, len(to_print)):
             indx = 0
             while to_print[i][indx].strip() != "" or to_print[i][indx + 1].startswith(
-                "["
+                "[",
             ):
                 indx += 1
             indx += 1

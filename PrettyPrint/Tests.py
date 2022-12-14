@@ -21,8 +21,8 @@ class Person:
 
     def __str__(self):
         return f"""Person {{
-    age: {self.age}, 
-    name: {self.name} 
+    age: {self.age},
+    name: {self.name}
 }}"""
 
 
