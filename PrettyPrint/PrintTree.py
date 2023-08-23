@@ -75,7 +75,7 @@ class PrettyPrintTree:
             self.max_depth = max_depth
         self.get_children = lambda x: x.children if isinstance(x, DictTree) else []
         self.get_node_val = lambda x: x.val if isinstance(x, DictTree) else x
-        self(DictTree(name, dic))
+        return self(DictTree(name, dic))
 
     def __call__(self, node, max_depth: int = 0, orientation=None):
         if orientation is not None:
