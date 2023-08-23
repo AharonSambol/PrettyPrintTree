@@ -94,8 +94,7 @@ class PrettyPrintTree:
 """,
             )
         if isinstance(node, dict) or isinstance(node, list) or isinstance(node, tuple):
-            self.print_json(node, max_depth=max_depth)
-            return
+            return self.print_json(node, max_depth=max_depth)
         if self.start_message is not None and not self.dont_print:
             print(self.start_message(node))
         if max_depth:
