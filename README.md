@@ -31,6 +31,7 @@ from PrettyPrint import PrettyPrintTree
 I tried to make this as flexible as possible, so in order to support multiple types of trees
 you need to explain to the program how to print your tree. The way to accomplish this is by passing 2 lambdas (or any other Callable):
 1)  get_children: Given a node of your tree type returns an iterable of all its children (from left to right).
+    
     For example if this is your tree implementation:
     ```python
     class Tree:
@@ -42,27 +43,16 @@ you need to explain to the program how to print your tree. The way to accomplish
     ```python
     lambda node: node.children
     ```
-    Or if your tree implementation is:
-    ```python
-    class Tree:
-        def __init__(self, val):
-            self.val = val
-            self.child_right = None
-            self.child_left = None
-    ```
-    Then get_children would be: 
-    ```python
-    lambda node: [node.child_left, node.child_right]
-    ```
 
-2)  get_value: Given a node of your tree type returns that node's value
-    for example if your tree implementation is:
+2)  get_value: Given a node of your tree type returns that node's value.
+    
+    For this tree implementation:
     ```python
     class Tree:
         def __init__(self, val):
             self.val = val
     ```
-    then get_value would be: 
+    The get_value would be: 
     ```python
     lambda node: node.val
     ```
@@ -76,7 +66,7 @@ then you can call it whenever you want without needing to pass the lambdas each 
 
 
 ## Examples
-
+### Simple Ttree
 ```python
 from PrettyPrint import PrettyPrintTree
 
@@ -103,6 +93,36 @@ pt(tree)
 ```
 ![plot](./ExampleImages/one_to_seven.JPG)
 
+<br>
+
+### Binary Tree
+```python
+class Tree:
+    def __init__(self, val):
+        self.val = val
+        self.right = None
+        self.left = None
+```
+One approach would be: 
+```python
+PrettyPrintTree(
+    lambda x: [x for x in [x.left, x.right] if x is not None],
+    lambda x: x.val
+)
+```
+![img.png](img.png)
+
+Although this won't preserve the direction of the children in the event that only one child is present.
+<br>
+A different approach would be:
+```python
+PrettyPrintTree(
+    lambda x: [] if x is None or x.left is x.right is None else [x.left, x.right],
+    lambda x: x.val if x else None
+)
+```
+
+![img_1.png](img_1.png)
 
 # Other Settings
 
