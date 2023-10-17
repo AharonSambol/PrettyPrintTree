@@ -2,6 +2,7 @@ import re
 import sys
 from collections.abc import Iterable
 from typing import Callable
+from cmd2.ansi import style_aware_wcswidth as text_width
 
 from colorama import Back, Style
 
@@ -124,7 +125,7 @@ class PrettyPrintTree:
 
     def get_val(self, node):
         st_val = str(self.get_node_val(node))
-        if self.trim and len(st_val) > self.trim:
+        if self.trim and text_width(st_val) > self.trim:
             st_val = st_val[: self.trim] + "..."
         if self.show_newline:
             escape_newline = lambda match: "\\n" if match.group(0) == "\n" else "\\\\n"
@@ -132,8 +133,8 @@ class PrettyPrintTree:
         if "\n" not in st_val:
             return [[st_val]]
         lst_val = st_val.split("\n")
-        longest = max(len(x) for x in lst_val)
-        return [[f'{x}{" " * (longest - len(x))}'] for x in lst_val]
+        longest = max(text_width(x) for x in lst_val)
+        return [[f'{x}{" " * (longest - text_width(x))}'] for x in lst_val]
 
     def tree_to_str(self, node, depth=0):
         val = self.get_val(node)
@@ -159,34 +160,34 @@ class PrettyPrintTree:
                     if l + 1 >= len(to_print):
                         to_print.append([])
                     if l == 0:
-                        len_line = len("".join(line))
-                        middle_of_child = len_line - sum(divmod(len(line[-1]), 2))
-                        len_to_print_0 = len("".join(to_print[0]))
+                        len_line = text_width("".join(line))
+                        middle_of_child = len_line - sum(divmod(text_width(line[-1]), 2))
+                        len_to_print_0 = text_width("".join(to_print[0]))
                         to_print[0].append(
                             (spacing - len_to_print_0 + middle_of_child) * " " + "┬",
                         )
                     to_print[l + 1].append(
-                        " " * (spacing - len("".join(to_print[l + 1]))),
+                        " " * (spacing - text_width("".join(to_print[l + 1]))),
                     )
                     to_print[l + 1].extend(line)
-                spacing = max(len("".join(x)) for x in to_print) + 1
+                spacing = max(text_width("".join(x)) for x in to_print) + 1
 
             if len(to_print[0]) != 1:
                 new_lines = "".join(to_print[0])
-                space_before = len(new_lines) - len(new_lines.strip())
+                space_before = text_width(new_lines) - text_width(new_lines.strip())
                 new_lines = new_lines.strip()
-                ln_of_stripped = len(new_lines)
+                ln_of_stripped = text_width(new_lines)
                 new_lines = (
                     " " * space_before + "┌" + new_lines[1:-1].replace(" ", "─") + "┐"
                 )
-                pipe_pos = middle = len(new_lines) - sum(divmod(ln_of_stripped, 2))
+                pipe_pos = middle = text_width(new_lines) - sum(divmod(ln_of_stripped, 2))
                 new_ch = {"─": "┴", "┬": "┼", "┌": "├", "┐": "┤"}[new_lines[middle]]
                 new_lines = new_lines[:middle] + new_ch + new_lines[middle + 1 :]
                 to_print[0] = [new_lines]
             else:
                 to_print[0][0] = to_print[0][0][:-1] + "│"
-                pipe_pos = len(to_print[0][0]) - 1
-            spacing = " " * (pipe_pos - sum(divmod(len(val[0][0]), 2)))
+                pipe_pos = text_width(to_print[0][0]) - 1
+            spacing = " " * (pipe_pos - sum(divmod(text_width(val[0][0]), 2)))
         else:
             spacing = ""
 
@@ -203,17 +204,17 @@ class PrettyPrintTree:
     def put_label(self, node, res):
         label = self.get_label(node)
         label = ("|" + str(label) + "|") if label else "│"
-        if len(label) > len(res[0][-1]):
-            diff = len(label) - len(res[0][-1])
+        if text_width(label) > text_width(res[0][-1]):
+            diff = text_width(label) - text_width(res[0][-1])
             for row in res:
                 row[0] = " " * diff + row[0]
         if len(res[0]) == 2:
-            d, m = divmod(len(res[0][-1]), 2)
-            pos = len(res[0][0]) + d - (1 * (1 - m))
+            d, m = divmod(text_width(res[0][-1]), 2)
+            pos = text_width(res[0][0]) + d - (1 * (1 - m))
         else:
-            pos = len(res[0][0]) // 2
+            pos = text_width(res[0][0]) // 2
         res.insert(0, [" " * pos, "│"])
-        res.insert(0, [" " * (pos - len(label) // 2), label])
+        res.insert(0, [" " * (pos - text_width(label) // 2), label])
 
     def tree_to_str_horizontal(self, node, depth=0):
         val = self.get_val(node)
@@ -236,14 +237,14 @@ class PrettyPrintTree:
                 child_print = self.tree_to_str_horizontal(child, depth=depth + 1)
                 to_print.extend(child_print)
 
-        val_width = max(len("".join(x)) for x in val) + 2
+        val_width = max(text_width("".join(x)) for x in val) + 2
         middle_children = sum(divmod(len(to_print), 2))
         middle_this = sum(divmod(len(val), 2))
         pos = max(0, middle_children - middle_this)
         first = last = -1
         added = False
         for r, row in enumerate(to_print[:pos]):
-            if len("".join(row)) > 0 and "".join(row)[0] == "-":
+            if text_width("".join(row)) > 0 and "".join(row)[0] == "-":
                 while row[0] == "":
                     row.pop(0)
                 row[0] = ("┌" if first == -1 else "├") + row[0][1:]
@@ -288,10 +289,10 @@ class PrettyPrintTree:
                 to_print[r + pos].insert(0, " ")
             to_print[r + pos].insert(
                 2,
-                "  " * (val_width - len("[" + "".join(row) + "]")),
+                "  " * (val_width - text_width("[" + "".join(row) + "]")),
             )
-        for r, row in enumerate(to_print[pos + len(val) :]):
-            if len("".join(row)) > 0 and "".join(row)[0] == "-":
+        for r, row in enumerate(to_print[pos + len(val):]):
+            if text_width("".join(row)) > 0 and "".join(row)[0] == "-":
                 while row[0] == "":
                     row.pop(0)
                 row[0] = "├" + row[0][1:]
@@ -327,7 +328,7 @@ class PrettyPrintTree:
         return to_print
 
     def color_txt(self, x):
-        spaces = " " * (len(x) - len(x.lstrip()))
+        spaces = " " * (text_width(x) - text_width(x.lstrip()))
         x = x.lstrip()
         is_label = x.startswith("|")
         if is_label:
@@ -342,7 +343,7 @@ class PrettyPrintTree:
         for r, row in enumerate(val):
             val[r] = [spacing, f"│{row[0]}│"]
         if self.border:
-            top = [[spacing, "┌" + "─" * (len(val[0][1]) - 2) + "┐"]]
-            bottom = [[spacing, "└" + "─" * (len(val[0][1]) - 2) + "┘"]]
+            top = [[spacing, "┌" + "─" * (text_width(val[0][1]) - 2) + "┐"]]
+            bottom = [[spacing, "└" + "─" * (text_width(val[0][1]) - 2) + "┘"]]
             return top + val + bottom
         return val

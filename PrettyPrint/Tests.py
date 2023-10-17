@@ -1,5 +1,5 @@
 from colorama import Back
-
+from cmd2.ansi import style_aware_wcswidth as wcswidth
 from PrettyPrint import PrettyPrintTree
 
 
@@ -34,8 +34,7 @@ child1_2 = child1.add_child(Tree("wow", label='4%'))
 child1_2_1 = child1_2.add_child(Tree("wow's child", label='10%'))
 child2_1 = child2.add_child(Tree("an interesting story", label=0.5))
 child2_2 = child2.add_child(Tree("an boring story"))
-child2_2.add_child(Tree("abcdef\nghij\nklmnopqrstuv\nwxyz"))
-
+child2_2.add_child(Tree("abc\x1b[31mdgs\x1b[39mdf\nghij\nklmnopqrstuv\nwxyz"))
 PrettyPrintTree(lambda x: x.children, lambda x: x.val)(tree)
 print()
 PrettyPrintTree(lambda x: x.children, lambda x: x.val, border=True)(tree)
