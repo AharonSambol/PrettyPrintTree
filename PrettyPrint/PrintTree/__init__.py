@@ -1,1 +1,1 @@
-from PrettyPrint.PrintTree.TreePrinter import PrettyPrintTree
+from .TreePrinter import PrettyPrintTree

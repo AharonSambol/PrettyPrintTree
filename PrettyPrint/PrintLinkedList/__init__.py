@@ -1,1 +1,1 @@
-from PrettyPrint.PrintLinkedList.LinkedListPrinter import PrettyPrintLinkedList
+from .LinkedListPrinter import PrettyPrintLinkedList
