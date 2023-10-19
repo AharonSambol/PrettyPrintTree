@@ -1,6 +1,6 @@
 from colorama import Back
 from cmd2.ansi import style_aware_wcswidth as wcswidth
-from PrettyPrint import PrettyPrintTree
+from OldPrintTree import PrettyPrintTree
 
 
 class Tree:

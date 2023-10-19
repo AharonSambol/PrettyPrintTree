@@ -1,18 +1,43 @@
 # PrettyPrintTree
 
-This package allows you to print the tree datastructure in a readable fashion (in Python).
-
-It supports trees with any kind of data (as long it can be turned into a string).
-
-And even supports multi lined nodes (as in strings with \n).
+This package allows you to print trees (the datastructure) in a readable fashion.
+<br>
+It supports trees with any kind of data, as long it can be turned into a string.
+<br>
+And even supports multi-lined nodes (strings with \n).
 
 ![plot](./ExampleImages/one_to_seven.JPG)
 
-# Supported Python Version
+# Table Of Contents
+- [Requirements](#requirements)
+- [Install](#install)
+- [Import](#import)
+- [Documentation](#documentation)
+- [Example](#example)
+  - [Tree](#tree)
+  - [Linked List](#linked-list)
+- [Other Settings](#other-settings)
+  - [Horizontal](#horizontal)
+  - [Trim](#trim)
+  - [Return Instead of Print](#return-instead-of-print)
+  - [Color](#color)
+  - [Border](#border)
+  - [Escape NewLines](#escape-newlines)
+  - [Max Depth](#max-depth)
+  - [Start Message](#start-message)
+  - [Dictionaries \\ JSON](#dictionaries--json)
+  - [Labels](#labels)
+- [Advanced Examples](#advanced-examples)
+    - [Binary Tree](#binary-tree)
+  - [Filtering](#filtering)
+- [C#](#c)
+- [Java](#java)
 
+# Requirements
 Python 3.7 and up
 
 # Install
+You can easily install **PrettyPrintTree** via **pip**:
 
 ```bash
 pip install PrettyPrintTree
@@ -20,6 +45,7 @@ pip install PrettyPrintTree
 
 
 # Import
+Once installed, you can import it in your Python script:
 
 ```python
 from PrettyPrint import PrettyPrintTree
@@ -28,45 +54,49 @@ from PrettyPrint import PrettyPrintTree
 
 # Documentation
 
-I tried to make this as flexible as possible, so in order to support multiple types of trees
-you need to explain to the program how to print your tree. The way to accomplish this is by passing 2 lambdas (or any other Callable):
-1)  get_children: Given a node of your tree type returns an iterable of all its children (from left to right).
-    
-    For example if this is your tree implementation:
+To ensure flexibility, PrettyPrintTree requires you to define how to print your specific tree structure. This is achieved by providing two callable functions (lambdas):
+
+1) **get_children:** This function, given a node of your tree type, returns an iterable of all its children, from left to right.
+For instance, if your tree implementation looks like this:
     ```python
     class Tree:
         def __init__(self, val):
             self.val = val
             self.children = []
     ```
-    Then get_children would be as simple as: 
+    Your **get_children** function would be as simple as:
     ```python
     lambda node: node.children
     ```
 
-2)  get_value: Given a node of your tree type returns that node's value.
-    
-    For this tree implementation:
+2) **get_value:** Given a node of your tree type, this function should return that node's value.
+<br>
+For a tree implementation like this:
     ```python
     class Tree:
         def __init__(self, val):
             self.val = val
     ```
-    The get_value would be: 
+    The **get_value** function would be: 
     ```python
     lambda node: node.val
     ```
-    (if the value of the tree doesn't implement \_\_str\_\_ get_value should turn it into a string)
+    *Note: if the value of the tree doesn't implement `__str__`, the **get_value** function should convert it into a string.*
+
+To print the tree, you first need to create a PrettyPrintTree object by providing your lambdas and any additional settings. You can then call this object whenever needed without repeatedly specifying the lambdas.
+
+### Linked Lists
+Printing a linked-list is similar, instead of **get_children** you will need: 
+<br>
+**get_next:** This function, given a node of your linked-list type, returns the next node.
+
+And optionally:
+<br>
+**get_prev:** Given a node of your linked-list type, this function should return the previous node.
 
 
-
-
-In order to print the tree you first need to make a PrettyPrintTree object which you pass your lambdas (and any other settings) to,
-then you can call it whenever you want without needing to pass the lambdas each time.
-
-
-## Examples
-### Simple Ttree
+# Example
+### Tree
 ```python
 from PrettyPrint import PrettyPrintTree
 
@@ -93,68 +123,69 @@ pt(tree)
 ```
 ![plot](./ExampleImages/one_to_seven.JPG)
 
-<br>
-
-### Binary Tree
+### Linked List
 ```python
-class Tree:
+from PrettyPrint import PrettyPrintLinkedList
+
+class Node:
     def __init__(self, val):
         self.val = val
-        self.right = None
-        self.left = None
-```
-One approach would be: 
-```python
-PrettyPrintTree(
-    lambda x: [x for x in [x.left, x.right] if x is not None],
-    lambda x: x.val
-)
-```
-![img.png](img.png)
+        self.next_node = None
+        self.prev_node = None
 
-Although this won't preserve the direction of the children in the event that only one child is present.
-<br>
-A different approach would be:
-```python
-PrettyPrintTree(
-    lambda x: [] if x is None or x.left is x.right is None else [x.left, x.right],
-    lambda x: x.val if x else None
-)
-```
 
-![img_1.png](img_1.png)
+n1, n2, n3, n4 = Node("Node1"), Node("Node2"), Node("Node\nJs"), Node("Node4")
+n1.next_node = n2
+n2.next_node = n3
+n3.next_node = n4
+n3.prev_node = n2
+pt = PrettyPrintLinkedList(
+    lambda x: x.val,
+    lambda x: x.next_node,
+    lambda x: x.prev_node,
+    orientation=PrettyPrintLinkedList.Horizontal,
+)
+pt(n1)
+```
+![plot](./ExampleImages/linked_list.JPG)
 
 # Other Settings
 
-
+***These settings can either be set when initializing the `PrettyPrintTree` object or when calling the function (which will override the initial setting)***
 ## Horizontal
-You can print trees from left to right (instead of up to down)
+You can print trees from left to right instead of the default top-to-bottom layout:
 ```python
 pt = PrettyPrintTree(
     lambda x: x.children, 
     lambda x: x.val, 
-    default_orientation=PrettyPrintTree.HORIZONTAL
+    orientation=PrettyPrintTree.Horizontal
 )
 ```
-or 
-```python
-pt(node, orientation=PrettyPrintTree.HORIZONTAL)
-```
-![img.png](ExampleImages/img.png)
+![img.png](ExampleImages/horizontal_animals.JPG)
 
 
 ## Trim
-Say you only want to print the first few characters of each node (in order to keep the tree small for readability),
-then you can set trim to a specific amount of characters.
+If you want to print only a limited number of characters from each node to keep the tree concise and readable, you can use the **trim** setting:
 
 ```python
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, trim=5)
 ```
-![plot](./ExampleImages/trim.JPG)
+![plot](./ExampleImages/trim1.JPG)
+
+To use a different trim symbol instead of `...`, you can do this:
+
+```python
+pt = PrettyPrintTree(
+    lambda x: x.children, lambda x: x.val, trim=5,
+    trim_symbol=' ' + colorama.Back.GREEN
+)
+```
+![plot](./ExampleImages/trim2.JPG)
 
 
 ## Return Instead of Print
-Instead of printing the tree it can return the string instead if you prefer.
+
+If you prefer to get the tree as a string instead of printing it directly, you can enable the **return_instead_of_print** setting:
 
 ```python
 to_str = PrettyPrintTree(lambda x: x.children, lambda x: x.val, return_instead_of_print=True)
@@ -163,24 +194,26 @@ tree_as_str = to_str(tree)
 
 
 ## Color
-You can change the bg color of each node, or even just not use color.
+You can change the background color of each node or opt for no color at all:
 
 ```python
 from colorama import Back
 
-# change color to black:
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, color=Back.BLACK)
 ```
 ![plot](./ExampleImages/black.JPG)
+
+For no color:
+
 ```python
-# without any color:
-pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, color=None)
+pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, color='')
 ```
 ![plot](./ExampleImages/no_color.JPG)
 
 
 ## Border
-You can also surround each node with a little border:
+You can surround each node with a border:
+
 ```python
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, border=True)
 ```
@@ -188,36 +221,42 @@ pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, border=True)
 
 
 ## Escape NewLines
-You can escape \n so that each node will be printed on one line.
+To print each node on one line, you can escape the newline characters:
 
-Note: \\n will be escaped into \\\\n so that you can tell the difference
 ```python
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, show_newline_literal=True)
 ```
 ![plot](./ExampleImages/new_line.JPG)
+<br>
+In order to distinguish between \n and \\n you can highlight the \n's:
+
+```python
+PrettyPrintTree(
+    lambda x: x.children, lambda x: x.val,
+    show_newline_literal=True,
+    newline_literal=colorama.Fore.LIGHTGREEN_EX + '\\n' + colorama.Fore.RESET
+)
+```
+![plot](./ExampleImages/new_line2.JPG)
 
 
 ## Max Depth
-You can specify a max depth so that it will only print nodes up to that depth.
-This can be done either at the start:
+Limit the depth to control how many levels of nodes are printed:
+
 ```python
 pt = PrettyPrintTree(lambda x: x.children, lambda x: x.val, max_depth=10)
 ```
-Or when calling the function:
-```python
-pt(tree, max_depth=5)
-```
-This will override the max depth set at the start (if any) for this time only.
-To have no max depth, you can set it to -1.
+*Note: the head node has a depth of 0*
 
 
 ## Start Message
-You can give a lambda that will be given the tree and will return a string which will be printed before the tree.
+You can add a message to be printed before the tree. Use a lambda that receives the tree and returns a message:
+
 ```python
 pt = PrettyPrintTree(
     lambda x: x.children, 
     lambda x: x.val, 
-    start_message=lambda node: f'printing tree of type {node.typ}'
+    start_message=lambda node: f'printing tree of type {node.typ}:'
 )
 ```
 ![plot](./ExampleImages/msg.JPG)
@@ -225,29 +264,19 @@ pt = PrettyPrintTree(
 
 ## Dictionaries \ JSON
 
-Printing JSON is also an option.
-Although it needs to be turned into dict \ list \ tuple first
+**PrettyPrintTree** can also print JSON structures, although they need to be converted into a dictionary, list, or tuple first:
  
 ```python
 some_json = {'foo': 1, 'bar': ('a', 'b'), 'qux': {'foo': 1, 'bar': ['a', 'b']}}
 pt = PrettyPrintTree()
-# either:
-pt(some_json)
-# or:
-pt.print_json(some_json, name="DICT", max_depth=10)
+pt.print_json(some_json, name="DICT")
 ```
-![plot](./ExampleImages/dic.JPG)
+![plot](./ExampleImages/json.JPG)
 
 
 ## Labels
 
-You can also label the branches in your tree.
-
-The label lambda should return a string indicating the label between the node and its parent, if there should be no label then None or False.
-
-NOTE: Currently this only works on vertical trees
-
-NOTE: Each label must be on a single line (no \n)
+You can label the branches in your tree by providing a lambda that returns a label between the node and its parent. Use `None` or `False` if no label is needed:
 
 ```python
 pt = PrettyPrintTree(
@@ -256,9 +285,9 @@ pt = PrettyPrintTree(
     lambda x: x.label
 )
 ```
-![plot](./ExampleImages/statistic.JPG)
+![plot](./ExampleImages/labels_duck.JPG)
 
-You can even color the labels using label_color
+You can even apply color to the labels using **label_color**:
 
 ```python
 from colorama import Back
@@ -274,9 +303,41 @@ pt = PrettyPrintTree(
 
 # Advanced Examples
 
+### Binary Tree
+Here's how to print a binary tree:
+
+```python
+class Tree:
+    def __init__(self, val):
+        self.val = val
+        self.right = None
+        self.left = None
+```
+One approach is to define **get_children** as follows:
+
+```python
+PrettyPrintTree(
+    lambda x: [x for x in [x.prev_node, x.next_node] if x is not None],
+    lambda x: x.val
+)
+```
+![img.png](ExampleImages/simple_1to6.png)
+
+However, this approach does not preserve the direction of the children when only one child is present. For better results, use this approach:
+
+```python
+PrettyPrintTree(
+    lambda x: [] if x is None or x.prev_node is x.next_node is None else [x.prev_node, x.next_node],
+    lambda x: x.val if x else (colorama.Back.BLACK + '   ' + colorama.Back.LIGHTBLACK_EX)
+)
+```
+
+![img_1.png](ExampleImages/binary_tree2.png)
+
 ## Filtering
 
-To filter specific nodes all you need to do is add a filter in the get_children lambda, eg:
+You can easily filter specific nodes by adding a filter in the **get_children** lambda:
+
 ```python
 PrettyPrintTree(lambda node: filter(lambda n: "to print" in str(n.val), node.children), ...
 ```
@@ -286,11 +347,11 @@ PrettyPrintTree(lambda node: [n for n in node.children if n.val > 3.141], ...
 
 # C#
 
-I made a C# version too:
+A C# version of PrettyPrintTree is also available: 
 https://github.com/AharonSambol/PrettyPrintTreeCSharp
 
 
 # Java
 
-I made a Java version too:
+A Java version of PrettyPrintTree is also available: 
 https://github.com/AharonSambol/PrettyPrintTreeJava
