@@ -1,12 +1,15 @@
 # PrettyPrintTree
 
-This package allows you to print trees (the datastructure) in a readable fashion.
+This package allows you to print **trees** (the datastructure) and **linked-lists** in a readable fashion.
 <br>
 It supports trees with any kind of data, as long it can be turned into a string.
 <br>
 And even supports multi-lined nodes (strings with \n).
 
 ![plot](./ExampleImages/one_to_seven.JPG)
+![plot](./ExampleImages/json.JPG)
+![plot](./ExampleImages/linked_list.JPG)
+
 
 # Table Of Contents
 - [Requirements](#requirements)
