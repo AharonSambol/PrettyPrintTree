@@ -72,15 +72,16 @@ For instance, if your tree implementation looks like this:
     lambda node: node.children
     ```
 
-2) **get_value:** Given a node of your tree type, this function should return that node's value.
-<br>
-For a tree implementation like this:
+2) **get_value:** Given a node of your tree type, this function should return that node's value. <br>For a tree implementation like this:
+
     ```python
     class Tree:
         def __init__(self, val):
             self.val = val
     ```
-    The **get_value** function would be: 
+   
+    The **get_value** function would be:
+
     ```python
     lambda node: node.val
     ```
