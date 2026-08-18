@@ -1,7 +1,6 @@
 from colorama import Back
-from cmd2.ansi import style_aware_wcswidth as wcswidth
-from OldPrintTree import PrettyPrintTree
 
+from PrettyPrint import PrettyPrintTree
 
 class Tree:
     def __init__(self, value, label=None):
@@ -32,7 +31,7 @@ child2 = tree.add_child(Tree(2))
 child1_1 = child1.add_child(Tree("!!!!!!!!!!\n::::::::"))
 child1_2 = child1.add_child(Tree("wow", label='4%'))
 child1_2_1 = child1_2.add_child(Tree("wow's child", label='10%'))
-child2_1 = child2.add_child(Tree("an interesting story", label=0.5))
+child2_1 = child2.add_child(Tree("an interesting story💁👌🎍😍", label=0.5))
 child2_2 = child2.add_child(Tree("an boring story"))
 child2_2.add_child(Tree("abc\x1b[31mdgs\x1b[39mdf\nghij\nklmnopqrstuv\nwxyz"))
 PrettyPrintTree(lambda x: x.children, lambda x: x.val)(tree)
@@ -56,20 +55,20 @@ PrettyPrintTree(lambda x: x.children, lambda x: x.val, lambda x: x.label, label_
 print()
 
 
-PrettyPrintTree(lambda x: x.children, lambda x: x.val, default_orientation=PrettyPrintTree.HORIZONTAL)(tree)
+PrettyPrintTree(lambda x: x.children, lambda x: x.val, orientation=PrettyPrintTree.Horizontal)(tree)
 print()
 PrettyPrintTree(lambda x: x.children, lambda x: x.val,
-                default_orientation=PrettyPrintTree.HORIZONTAL,
+                orientation=PrettyPrintTree.Horizontal,
                 show_newline_literal=True)(tree)
 print()
 PrettyPrintTree(lambda x: x.children, lambda x: x.val,
-                default_orientation=PrettyPrintTree.HORIZONTAL, border=True, max_depth=3)(tree)
+                orientation=PrettyPrintTree.Horizontal, border=True, max_depth=3)(tree)
 print()
 PrettyPrintTree(lambda x: x.children, lambda x: x.val, trim=5, color=Back.BLACK,
-                default_orientation=PrettyPrintTree.HORIZONTAL)(tree)
+                orientation=PrettyPrintTree.Horizontal)(tree)
 print()
 
 some_json = {'foo': 1, 'bar': (('a', 'a2'), 'b'), 'qux': {'foo': 1, 'arr': [{1: 2, 2: 1}], 'bar': ['a', 'b']}}
-PrettyPrintTree(color=Back.WHITE)(some_json)
+# PrettyPrintTree(color=Back.WHITE)(some_json)
 print()
 PrettyPrintTree().print_json(some_json, name="DICT", max_depth=3)

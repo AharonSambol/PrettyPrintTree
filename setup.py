@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="PrettyPrintTree",
-    version="2.0.1",
+    version="2.0.2",
     author="Aharon Sambol",
     author_email="email@example.com",
     py_modules=find_packages("PrettyPrint"),
@@ -19,6 +19,6 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=[
-        "colorama", "cmd2"
+        "colorama", "cmd2<=2.7.0"
     ],
 )
